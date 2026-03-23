@@ -150,14 +150,22 @@ function calcCost() {
   });
 
   const yieldAmount = Number(document.getElementById("yield").value);
+  const yieldUnit = document.getElementById("yieldUnit").value;
   const sell = Number(document.getElementById("priceSell").value);
 
-  const perUnit = yieldAmount ? total / yieldAmount : 0;
+  let perUnit = 0;
+
+  if (yieldUnit === "g") {
+    perUnit = total / yieldAmount;
+  } else {
+    perUnit = total / yieldAmount; // 1個あたり原価
+  }
+
   const rate = sell ? (total / sell) * 100 : 0;
 
   document.getElementById("result").innerHTML = `
     合計原価: ${total.toFixed(2)}円<br>
-    g単価: ${perUnit.toFixed(3)}円/g<br>
+    ${yieldUnit}単価: ${perUnit.toFixed(2)}円/${yieldUnit}<br>
     原価率: ${rate.toFixed(1)}%
   `;
 }
