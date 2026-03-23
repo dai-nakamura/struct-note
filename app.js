@@ -1,0 +1,86 @@
+let master = JSON.parse(localStorage.getItem("master")) || [];
+
+function save() {
+  localStorage.setItem("master", JSON.stringify(master));
+}
+
+function render() {
+  const list = document.getElementById("list");
+  list.innerHTML = "";
+
+  master.forEach((item, index) => {
+    const div = document.createElement("div");
+    div.className = "card";
+
+    div.innerHTML = `
+      ${item.name} / ${item.category}<br>
+      ${item.unit_price.toFixed(3)}円/${item.unit}
+      <br>
+      <button onclick="deleteItem(${index})">削除</button>
+    `;
+
+    list.appendChild(div);
+  });
+}
+
+function addItem() {
+  const name = document.getElementById("name").value;
+  const category = document.getElementById("category").value;
+  const lot = parseFloat(document.getElementById("lot").value);
+  const price = parseFloat(document.getElementById("price").value);
+  const unit = document.getElementById("unit").value;
+  const g_per_unit = parseFloat(document.getElementById("g_per_unit").value);
+
+  let unit_price = 0;
+
+  if (unit === "g") {
+    unit_price = price / lot;
+  } else {
+    unit_price = price / lot;
+  }
+
+  master.push({
+    name,
+    category,
+    lot,
+    price,
+    unit,
+    unit_price,
+    g_per_unit
+  });
+
+  save();
+  render();
+}
+
+function deleteItem(index) {
+  master.splice(index, 1);
+  save();
+  render();
+}
+
+function importCSV() {
+  const text = document.getElementById("csvInput").value;
+  const lines = text.split("\n");
+
+  lines.slice(1).forEach(line => {
+    const cols = line.split(",");
+
+    if (cols.length < 7) return;
+
+    master.push({
+      name: cols[1],
+      category: cols[2],
+      lot: parseFloat(cols[5]),
+      price: parseFloat(cols[4]),
+      unit: cols[6],
+      unit_price: parseFloat(cols[7]) || 0,
+      g_per_unit: parseFloat(cols[8]) || null
+    });
+  });
+
+  save();
+  render();
+}
+
+render();
