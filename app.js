@@ -90,5 +90,77 @@ function parseCSV(text) {
     addItem({ name, category, price, lot, unitPrice });
   }
 }
+let recipe = [];
+
+function updateMaterialSelect() {
+  const select = document.getElementById("materialSelect");
+  select.innerHTML = "";
+
+  items.forEach((item, i) => {
+    const option = document.createElement("option");
+    option.value = i;
+    option.textContent = item.name;
+    select.appendChild(option);
+  });
+}
+
+function addIngredient() {
+  const index = document.getElementById("materialSelect").value;
+  const amount = Number(document.getElementById("useAmount").value);
+
+  if (!amount) return;
+
+  const item = items[index];
+
+  recipe.push({
+    name: item.name,
+    unitPrice: item.unitPrice,
+    amount
+  });
+
+  renderRecipe();
+}
+
+function renderRecipe() {
+  const list = document.getElementById("recipeList");
+  list.innerHTML = "";
+
+  recipe.forEach((r, i) => {
+    const div = document.createElement("div");
+
+    div.innerHTML = `
+      ${r.name} - ${r.amount}g
+      <button onclick="removeIngredient(${i})">削除</button>
+    `;
+
+    list.appendChild(div);
+  });
+}
+
+function removeIngredient(i) {
+  recipe.splice(i, 1);
+  renderRecipe();
+}
+
+function calcCost() {
+  let total = 0;
+
+  recipe.forEach(r => {
+    total += r.unitPrice * r.amount;
+  });
+
+  const yieldAmount = Number(document.getElementById("yield").value);
+  const sell = Number(document.getElementById("priceSell").value);
+
+  const perUnit = yieldAmount ? total / yieldAmount : 0;
+  const rate = sell ? (total / sell) * 100 : 0;
+
+  document.getElementById("result").innerHTML = `
+    合計原価: ${total.toFixed(2)}円<br>
+    g単価: ${perUnit.toFixed(3)}円/g<br>
+    原価率: ${rate.toFixed(1)}%
+  `;
+}
 
 render();
+updateMaterialSelect();
