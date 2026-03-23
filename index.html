@@ -41,6 +41,25 @@
 <hr>
 
 <h2>一覧</h2>
+  <hr>
+
+<h2>レシピ</h2>
+
+<input id="recipeName" placeholder="レシピ名"><br>
+
+<select id="materialSelect"></select>
+<input id="useAmount" placeholder="使用量（g）">
+<button onclick="addIngredient()">材料追加</button>
+
+<h3>材料リスト</h3>
+<div id="recipeList"></div>
+
+<input id="yield" placeholder="出来高（g）"><br>
+<input id="priceSell" placeholder="売価（円）"><br>
+
+<button onclick="calcCost()">計算</button>
+
+<h3 id="result"></h3>
 <div id="list"></div>
 
 <script src="app.js"></script>
