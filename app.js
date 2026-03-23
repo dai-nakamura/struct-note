@@ -1,86 +1,94 @@
-let master = JSON.parse(localStorage.getItem("master")) || [];
+let items = JSON.parse(localStorage.getItem("items") || "[]");
 
 function save() {
-  localStorage.setItem("master", JSON.stringify(master));
+  localStorage.setItem("items", JSON.stringify(items));
 }
 
 function render() {
   const list = document.getElementById("list");
   list.innerHTML = "";
 
-  master.forEach((item, index) => {
+  items.forEach((item, index) => {
     const div = document.createElement("div");
     div.className = "card";
 
     div.innerHTML = `
-      ${item.name} / ${item.category}<br>
-      ${item.unit_price.toFixed(3)}円/${item.unit}
-      <br>
-      <button onclick="deleteItem(${index})">削除</button>
+      <div>${item.name} / ${item.category}</div>
+      <div>${item.unitPrice.toFixed(3)}円/g</div>
+      <button onclick="removeItem(${index})">削除</button>
     `;
 
     list.appendChild(div);
   });
 }
 
-function addItem() {
-  const name = document.getElementById("name").value;
-  const category = document.getElementById("category").value;
-  const lot = parseFloat(document.getElementById("lot").value);
-  const price = parseFloat(document.getElementById("price").value);
-  const unit = document.getElementById("unit").value;
-  const g_per_unit = parseFloat(document.getElementById("g_per_unit").value);
-
-  let unit_price = 0;
-
-  if (unit === "g") {
-    unit_price = price / lot;
-  } else {
-    unit_price = price / lot;
-  }
-
-  master.push({
-    name,
-    category,
-    lot,
-    price,
-    unit,
-    unit_price,
-    g_per_unit
-  });
-
+function removeItem(index) {
+  items.splice(index, 1);
   save();
   render();
 }
 
-function deleteItem(index) {
-  master.splice(index, 1);
+function addItem(item) {
+  items.push(item);
   save();
   render();
+}
+
+function addManual() {
+  const name = document.getElementById("name").value;
+  const category = document.getElementById("category").value;
+  const lot = Number(document.getElementById("lot").value);
+  const price = Number(document.getElementById("price").value);
+
+  if (!name || !lot || !price) {
+    alert("入力不足");
+    return;
+  }
+
+  const unitPrice = price / lot;
+
+  addItem({ name, category, lot, price, unitPrice });
 }
 
 function importCSV() {
   const text = document.getElementById("csvInput").value;
-  const lines = text.split("\n");
+  parseCSV(text);
+}
 
-  lines.slice(1).forEach(line => {
-    const cols = line.split(",");
+function importCSVFile() {
+  const file = document.getElementById("csvFile").files[0];
 
-    if (cols.length < 7) return;
+  if (!file) {
+    alert("ファイル選択してください");
+    return;
+  }
 
-    master.push({
-      name: cols[1],
-      category: cols[2],
-      lot: parseFloat(cols[5]),
-      price: parseFloat(cols[4]),
-      unit: cols[6],
-      unit_price: parseFloat(cols[7]) || 0,
-      g_per_unit: parseFloat(cols[8]) || null
-    });
-  });
+  const reader = new FileReader();
 
-  save();
-  render();
+  reader.onload = function (e) {
+    parseCSV(e.target.result);
+  };
+
+  reader.readAsText(file);
+}
+
+function parseCSV(text) {
+  const lines = text.trim().split("\n");
+
+  for (let i = 1; i < lines.length; i++) {
+    const cols = lines[i].split(",");
+
+    const name = cols[1];
+    const category = cols[2];
+    const price = Number(cols[4]);
+    const lot = Number(cols[5]);
+
+    if (!name || !price || !lot) continue;
+
+    const unitPrice = price / lot;
+
+    addItem({ name, category, price, lot, unitPrice });
+  }
 }
 
 render();
