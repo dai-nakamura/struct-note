@@ -4,6 +4,17 @@ function save() {
   localStorage.setItem("items", JSON.stringify(items));
 }
 
+function saveData() {
+  localStorage.setItem("items", JSON.stringify(items));
+}
+
+function loadData() {
+  const data = localStorage.getItem("items");
+  if (data) {
+    items = JSON.parse(data);
+  }
+}
+
 function render() {
   const list = document.getElementById("list");
   list.innerHTML = "";
@@ -21,9 +32,30 @@ function render() {
     list.appendChild(div);
   });
 }
+function exportData() {
+  const blob = new Blob([JSON.stringify(items)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "cost-data.json";
+  a.click();
+}
+
+function importData() {
+  const file = document.getElementById("loadFile").files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    items = JSON.parse(e.target.result);
+    saveData();
+    render();
+  };
+  reader.readAsText(file);
+}
 
 function removeItem(index) {
   items.splice(index, 1);
+  saveData();
   save();
   render();
 }
@@ -43,6 +75,7 @@ function addManual() {
   if (!name || !lot || !price) {
     alert("入力不足");
     return;
+    saveData();
   }
 
   const unitPrice = price / lot;
@@ -170,5 +203,6 @@ function calcCost() {
   `;
 }
 
+loadData();
 render();
 updateMaterialSelect();
