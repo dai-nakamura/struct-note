@@ -44,7 +44,7 @@ function render() {
 
     list.appendChild(div);
   });
-
+  updateSubCategoryFilter();
   updateMaterialSelect();
 }
 function toggleDetail(index) {
@@ -329,32 +329,6 @@ function calcCost() {
 // --------------------
 loadData();
 render() {
-  const list = document.getElementById("list");
-  list.innerHTML = "";
-
-  items.forEach((item, index) => {
-    const div = document.createElement("div");
-    div.className = "card";
-
-    const unit = item.unit || "g";
-    const unitPrice = Number(item.unitPrice) || 0;
-
-    div.innerHTML = `
-      <div>
-        <strong>${item.name}</strong> / ${item.subcategory}
-        <button onclick="toggleDetail(${index})">詳細</button>
-      </div>
-      <div id="detail-${index}" style="display:none; margin-top:8px;">
-        <div>ロット: ${item.lot}${unit}</div>
-        <div>価格: ${item.price}円</div>
-        <div>単価: ${unitPrice.toFixed(3)}円/${unit}</div>
-        <button onclick="removeItem(${index})">削除</button>
-      </div>
-    `;
-
-    list.appendChild(div);
-  });
-
   updateSubCategoryFilter();
   updateMaterialSelect(); 
 }
