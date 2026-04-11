@@ -41,7 +41,9 @@
 <hr>
 
 <h2>一覧</h2>
-  <hr>
+<div id="list"></div>
+
+<hr>
 
 <h2>レシピ</h2>
 
@@ -50,27 +52,29 @@
 <select id="materialSelect"></select>
 <input id="useAmount" placeholder="使用量（g）">
 <button onclick="addIngredient()">材料追加</button>
-  <hr>
-<h2>データ管理</h2>
-
-<button onclick="exportData()">保存（JSON）</button>
-<input type="file" id="loadFile" accept=".json">
-<button onclick="importData()">読み込み</button>
 
 <h3>材料リスト</h3>
 <div id="recipeList"></div>
 
-<input id="yield" placeholder="出来高（g）"><br>
-  <select id="yieldUnit">
+<input id="yield" placeholder="出来高"><br>
+<select id="yieldUnit">
   <option value="g">g</option>
   <option value="個">個</option>
 </select>
+
 <input id="priceSell" placeholder="売価（円）"><br>
 
 <button onclick="calcCost()">計算</button>
 
 <h3 id="result"></h3>
-<div id="list"></div>
+
+<hr>
+
+<h2>データ管理</h2>
+
+<button onclick="exportData()">保存（JSON）</button>
+<input type="file" id="loadFile" accept=".json">
+<button onclick="importData()">読み込み</button>
 
 <script src="app.js"></script>
 </body>
