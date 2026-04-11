@@ -19,3 +19,15 @@ button {
   padding: 10px;
   margin-bottom: 10px;
 }
+#masterToggleBtn {
+  width: 100%;
+  text-align: left;
+  font-size: 24px;
+  font-weight: bold;
+  padding: 12px;
+  margin: 12px 0;
+}
+
+#masterSection {
+  margin-top: 10px;
+}
