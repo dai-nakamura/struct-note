@@ -246,7 +246,8 @@ function toggleMaster() {
 
   if (!section || !button) return;
 
-  const isHidden = section.style.display === "none";
+  const isHidden =
+    section.style.display === "none" || section.style.display === "";
 
   section.style.display = isHidden ? "block" : "none";
   button.textContent = isHidden ? "原価マスター ▲" : "原価マスター ▼";
