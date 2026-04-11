@@ -202,20 +202,44 @@ function parseCSV(text) {
 // --------------------
 // レシピ
 // --------------------
+function updateCategoryFilter() {
+  const filter = document.getElementById("filterCategory");
+  if (!filter) return;
+
+  const currentValue = filter.value;
+  filter.innerHTML = `<option value="">すべての分類</option>`;
+
+  const categories = [...new Set(items.map(item => item.category).filter(Boolean))];
+
+  categories.forEach(category => {
+    const option = document.createElement("option");
+    option.value = category;
+    option.textContent = category;
+    filter.appendChild(option);
+  });
+
+  filter.value = currentValue;
+}
 function updateMaterialSelect() {
   const select = document.getElementById("materialSelect");
+  const filter = document.getElementById("filterCategory");
+
   if (!select) return;
 
+  const selectedCategory = filter ? filter.value : "";
   select.innerHTML = "";
 
-  items.forEach((item, i) => {
-    const option = document.createElement("option");
-    option.value = i;
-    option.textContent = item.name;
-    select.appendChild(option);
-  });
-}
+  items
+    .filter(item => !selectedCategory || item.category === selectedCategory)
+    .forEach((item, i) => {
+      const option = document.createElement("option");
+      option.value = items.indexOf(item);
+      option.textContent = `${item.name} (${item.category})`;
+      select.appendChild(option);
+    });
 
+  updateCategoryFilter();
+}
 function addIngredient() {
   const index = Number(document.getElementById("materialSelect").value);
   const amount = Number(document.getElementById("useAmount").value);
@@ -294,3 +318,5 @@ function calcCost() {
 // --------------------
 loadData();
 render();
+updateCategoryFilter();
+updateMaterialSelect();
