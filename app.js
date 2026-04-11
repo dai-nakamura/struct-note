@@ -1,9 +1,9 @@
-let items = JSON.parse(localStorage.getItem("items") || "[]");
+let items = [];
+let recipe = [];
 
-function save() {
-  localStorage.setItem("items", JSON.stringify(items));
-}
-
+// --------------------
+// 保存・読込
+// --------------------
 function saveData() {
   localStorage.setItem("items", JSON.stringify(items));
 }
@@ -15,6 +15,9 @@ function loadData() {
   }
 }
 
+// --------------------
+// 一覧表示
+// --------------------
 function render() {
   const list = document.getElementById("list");
   list.innerHTML = "";
@@ -23,17 +26,29 @@ function render() {
     const div = document.createElement("div");
     div.className = "card";
 
+    const unit = item.unit || "g";
+    const unitPrice = Number(item.unitPrice) || 0;
+
     div.innerHTML = `
       <div>${item.name} / ${item.category}</div>
-      <div>${item.unitPrice.toFixed(3)}円/g</div>
+      <div>${unitPrice.toFixed(3)}円/${unit}</div>
       <button onclick="removeItem(${index})">削除</button>
     `;
 
     list.appendChild(div);
   });
+
+  updateMaterialSelect();
 }
+
+// --------------------
+// JSON保存・読込
+// --------------------
 function exportData() {
-  const blob = new Blob([JSON.stringify(items)], { type: "application/json" });
+  const blob = new Blob([JSON.stringify(items, null, 2)], {
+    type: "application/json"
+  });
+
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
   a.download = "cost-data.json";
@@ -41,50 +56,84 @@ function exportData() {
 }
 
 function importData() {
-  const file = document.getElementById("loadFile").files[0];
-  if (!file) return;
+  const file = document.getElementById("loadFile")?.files[0];
+  if (!file) {
+    alert("JSONファイルを選択してください");
+    return;
+  }
 
   const reader = new FileReader();
-  reader.onload = function(e) {
-    items = JSON.parse(e.target.result);
-    saveData();
-    render();
+  reader.onload = function (e) {
+    try {
+      items = JSON.parse(e.target.result);
+      saveData();
+      render();
+      alert("JSON読込完了");
+    } catch (error) {
+      alert("JSONの読込に失敗しました");
+    }
   };
   reader.readAsText(file);
 }
 
+// --------------------
+// 材料追加・削除
+// --------------------
 function removeItem(index) {
   items.splice(index, 1);
   saveData();
-  save();
   render();
 }
 
 function addItem(item) {
   items.push(item);
-  save();
+  saveData();
   render();
 }
 
 function addManual() {
-  const name = document.getElementById("name").value;
-  const category = document.getElementById("category").value;
+  const name = document.getElementById("name").value.trim();
+  const category = document.getElementById("category").value.trim();
   const lot = Number(document.getElementById("lot").value);
   const price = Number(document.getElementById("price").value);
+  const unit = document.getElementById("unit").value;
+  const gPerUnit = Number(document.getElementById("gPerUnit").value) || null;
 
-  if (!name || !lot || !price) {
+  if (!name || !category || !lot || !price) {
     alert("入力不足");
     return;
-    saveData();
   }
 
   const unitPrice = price / lot;
 
-  addItem({ name, category, lot, price, unitPrice });
+  addItem({
+    name,
+    category,
+    lot,
+    price,
+    unit,
+    gPerUnit,
+    unitPrice
+  });
+
+  document.getElementById("name").value = "";
+  document.getElementById("category").value = "";
+  document.getElementById("lot").value = "";
+  document.getElementById("price").value = "";
+  document.getElementById("gPerUnit").value = "";
 }
 
+// --------------------
+// CSV取込
+// --------------------
 function importCSV() {
-  const text = document.getElementById("csvInput").value;
+  const text = document.getElementById("csvInput").value.trim();
+
+  if (!text) {
+    alert("CSVを貼ってください");
+    return;
+  }
+
   parseCSV(text);
 }
 
@@ -92,7 +141,7 @@ function importCSVFile() {
   const file = document.getElementById("csvFile").files[0];
 
   if (!file) {
-    alert("ファイル選択してください");
+    alert("ファイルを選択してください");
     return;
   }
 
@@ -111,22 +160,39 @@ function parseCSV(text) {
   for (let i = 1; i < lines.length; i++) {
     const cols = lines[i].split(",");
 
-    const name = cols[1];
-    const category = cols[2];
+    const name = cols[1]?.trim();
+    const category = cols[2]?.trim();
     const price = Number(cols[4]);
     const lot = Number(cols[5]);
+    const unit = cols[6]?.trim() || "g";
+    const unitPrice = Number(cols[7]) || (lot ? price / lot : 0);
+    const gPerUnit = cols[8] ? Number(cols[8]) : null;
 
-    if (!name || !price || !lot) continue;
+    if (!name || !category || !price || !lot) continue;
 
-    const unitPrice = price / lot;
-
-    addItem({ name, category, price, lot, unitPrice });
+    items.push({
+      name,
+      category,
+      price,
+      lot,
+      unit,
+      unitPrice,
+      gPerUnit
+    });
   }
-}
-let recipe = [];
 
+  saveData();
+  render();
+  alert("CSV取り込み完了");
+}
+
+// --------------------
+// レシピ
+// --------------------
 function updateMaterialSelect() {
   const select = document.getElementById("materialSelect");
+  if (!select) return;
+
   select.innerHTML = "";
 
   items.forEach((item, i) => {
@@ -138,24 +204,28 @@ function updateMaterialSelect() {
 }
 
 function addIngredient() {
-  const index = document.getElementById("materialSelect").value;
+  const index = Number(document.getElementById("materialSelect").value);
   const amount = Number(document.getElementById("useAmount").value);
 
   if (!amount) return;
 
   const item = items[index];
+  if (!item) return;
 
   recipe.push({
     name: item.name,
-    unitPrice: item.unitPrice,
+    unitPrice: Number(item.unitPrice) || 0,
     amount
   });
 
   renderRecipe();
+  document.getElementById("useAmount").value = "";
 }
 
 function renderRecipe() {
   const list = document.getElementById("recipeList");
+  if (!list) return;
+
   list.innerHTML = "";
 
   recipe.forEach((r, i) => {
@@ -183,17 +253,10 @@ function calcCost() {
   });
 
   const yieldAmount = Number(document.getElementById("yield").value);
-  const yieldUnit = document.getElementById("yieldUnit").value;
+  const yieldUnit = document.getElementById("yieldUnit")?.value || "g";
   const sell = Number(document.getElementById("priceSell").value);
 
-  let perUnit = 0;
-
-  if (yieldUnit === "g") {
-    perUnit = total / yieldAmount;
-  } else {
-    perUnit = total / yieldAmount; // 1個あたり原価
-  }
-
+  const perUnit = yieldAmount ? total / yieldAmount : 0;
   const rate = sell ? (total / sell) * 100 : 0;
 
   document.getElementById("result").innerHTML = `
@@ -203,6 +266,8 @@ function calcCost() {
   `;
 }
 
+// --------------------
+// 初期化
+// --------------------
 loadData();
 render();
-updateMaterialSelect();
