@@ -106,7 +106,7 @@ function addItem(item) {
 
 function addManual() {
   const name = document.getElementById("name").value.trim();
-  const category = document.getElementById("category").value.trim();
+  const subcategory = document.getElementById("subcategory").value.trim();
   const lot = Number(document.getElementById("lot").value);
   const price = Number(document.getElementById("price").value);
   const unit = document.getElementById("unit").value;
