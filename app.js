@@ -30,15 +30,28 @@ function render() {
     const unitPrice = Number(item.unitPrice) || 0;
 
     div.innerHTML = `
-      <div>${item.name} / ${item.category}</div>
-      <div>${unitPrice.toFixed(3)}円/${unit}</div>
-      <button onclick="removeItem(${index})">削除</button>
+      <div>
+        <strong>${item.name}</strong> / ${item.category}
+        <button onclick="toggleDetail(${index})">詳細</button>
+      </div>
+      <div id="detail-${index}" style="display:none; margin-top:8px;">
+        <div>ロット: ${item.lot}${unit}</div>
+        <div>価格: ${item.price}円</div>
+        <div>単価: ${unitPrice.toFixed(3)}円/${unit}</div>
+        <button onclick="removeItem(${index})">削除</button>
+      </div>
     `;
 
     list.appendChild(div);
   });
 
   updateMaterialSelect();
+}
+function toggleDetail(index) {
+  const detail = document.getElementById(`detail-${index}`);
+  if (!detail) return;
+
+  detail.style.display = detail.style.display === "none" ? "block" : "none";
 }
 
 // --------------------
