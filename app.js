@@ -257,7 +257,17 @@ function calcCost() {
   const sell = Number(document.getElementById("priceSell").value);
 
   const perUnit = yieldAmount ? total / yieldAmount : 0;
-  const rate = sell ? (total / sell) * 100 : 0;
+
+  let rate = 0;
+
+  if (sell && yieldAmount) {
+    if (yieldUnit === "個") {
+      const totalSales = sell * yieldAmount;   // 1個300円 × 12個
+      rate = (total / totalSales) * 100;
+    } else {
+      rate = (total / sell) * 100;
+    }
+  }
 
   document.getElementById("result").innerHTML = `
     合計原価: ${total.toFixed(2)}円<br>
