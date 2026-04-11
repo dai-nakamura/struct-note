@@ -47,7 +47,10 @@
 
 <h2>レシピ</h2>
 
-<input id="recipeName" placeholder="レシピ名"><br>
+
+<select id="filterCategory" onchange="updateMaterialSelect()">
+  <option value="">すべての分類</option>
+</select>
 
 <select id="materialSelect"></select>
 <input id="useAmount" placeholder="使用量（g）">
