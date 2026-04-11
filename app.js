@@ -236,8 +236,6 @@ function updateMaterialSelect() {
       option.textContent = `${item.name} (${item.subcategory})`;
       select.appendChild(option);
     });
-
-  updateSubCategoryFilter();
 }
 function toggleMaster() {
   const section = document.getElementById("masterSection");
