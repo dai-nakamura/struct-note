@@ -112,7 +112,7 @@ function addManual() {
   const unit = document.getElementById("unit").value;
   const gPerUnit = Number(document.getElementById("gPerUnit").value) || null;
 
-  if (!name || !category || !lot || !price) {
+  if (!name || !subcategory || !lot || !price) {
     alert("入力不足");
     return;
   }
@@ -121,7 +121,7 @@ function addManual() {
 
   addItem({
     name,
-    category,
+    subcategory,
     lot,
     price,
     unit,
@@ -130,7 +130,7 @@ function addManual() {
   });
 
   document.getElementById("name").value = "";
-  document.getElementById("category").value = "";
+  document.getElementById("subcategory").value = "";
   document.getElementById("lot").value = "";
   document.getElementById("price").value = "";
   document.getElementById("gPerUnit").value = "";
@@ -174,18 +174,18 @@ function parseCSV(text) {
     const cols = lines[i].split(",");
 
     const name = cols[1]?.trim();
-    const category = cols[2]?.trim();
+    const subcategory = cols[2]?.trim();
     const price = Number(cols[4]);
     const lot = Number(cols[5]);
     const unit = cols[6]?.trim() || "g";
     const unitPrice = Number(cols[7]) || (lot ? price / lot : 0);
     const gPerUnit = cols[8] ? Number(cols[8]) : null;
 
-    if (!name || !category || !price || !lot) continue;
+    if (!name || !subcategory || !price || !lot) continue;
 
     items.push({
       name,
-      category,
+      subcategory,
       price,
       lot,
       unit,
