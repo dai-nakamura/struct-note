@@ -174,7 +174,7 @@ function parseCSV(text) {
     const cols = lines[i].split(",");
 
     const name = cols[1]?.trim();
-    const subcategory = cols[2]?.trim();
+    const subcategory = cols[3]?.trim();
     const price = Number(cols[4]);
     const lot = Number(cols[5]);
     const unit = cols[6]?.trim() || "g";
