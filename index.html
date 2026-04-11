@@ -50,6 +50,12 @@
 <select id="materialSelect"></select>
 <input id="useAmount" placeholder="使用量（g）">
 <button onclick="addIngredient()">材料追加</button>
+  <hr>
+<h2>データ管理</h2>
+
+<button onclick="exportData()">保存（JSON）</button>
+<input type="file" id="loadFile" accept=".json">
+<button onclick="importData()">読み込み</button>
 
 <h3>材料リスト</h3>
 <div id="recipeList"></div>
