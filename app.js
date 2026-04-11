@@ -31,7 +31,7 @@ function render() {
 
     div.innerHTML = `
       <div>
-        <strong>${item.name}</strong> / ${item.category}
+        <strong>${item.name}</strong> / ${item.subcategory}
         <button onclick="toggleDetail(${index})">詳細</button>
       </div>
       <div id="detail-${index}" style="display:none; margin-top:8px;">
