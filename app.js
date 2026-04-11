@@ -202,19 +202,19 @@ function parseCSV(text) {
 // --------------------
 // レシピ
 // --------------------
-function updateCategoryFilter() {
-  const filter = document.getElementById("filterCategory");
+function updateSubCategoryFilter() {
+  const filter = document.getElementById("filterSubCategory");
   if (!filter) return;
 
   const currentValue = filter.value;
   filter.innerHTML = `<option value="">すべての分類</option>`;
 
-  const categories = [...new Set(items.map(item => item.category).filter(Boolean))];
+  const subcategories = [...new Set(items.map(item => item.subcategory).filter(Boolean))];
 
-  categories.forEach(category => {
+  categories.forEach(subcategory => {
     const option = document.createElement("option");
-    option.value = category;
-    option.textContent = category;
+    option.value = subcategory;
+    option.textContent = subcategory;
     filter.appendChild(option);
   });
 
@@ -222,19 +222,19 @@ function updateCategoryFilter() {
 }
 function updateMaterialSelect() {
   const select = document.getElementById("materialSelect");
-  const filter = document.getElementById("filterCategory");
+  const filter = document.getElementById("filterSubCategory");
 
   if (!select) return;
 
-  const selectedCategory = filter ? filter.value : "";
+  const selectedSubCategory = filter ? filter.value : "";
   select.innerHTML = "";
 
   items
-    .filter(item => !selectedCategory || item.category === selectedCategory)
+    .filter(item => !selectedSubCategory || item.subcategory === selectedSubCategory)
     .forEach((item, i) => {
       const option = document.createElement("option");
       option.value = items.indexOf(item);
-      option.textContent = `${item.name} (${item.category})`;
+      option.textContent = `${item.name} (${item.subcategory})`;
       select.appendChild(option);
     });
 
@@ -318,5 +318,5 @@ function calcCost() {
 // --------------------
 loadData();
 render();
-updateCategoryFilter();
+updateSubCategoryFilter();
 updateMaterialSelect();
