@@ -207,11 +207,10 @@ function updateSubCategoryFilter() {
   if (!filter) return;
 
   const currentValue = filter.value;
-  filter.innerHTML = `<option value="">すべての分類</option>`;
-
   const subcategories = [...new Set(items.map(item => item.subcategory).filter(Boolean))];
+filter.innerHTML = `<option value="">すべての分類</option>`;
 
-  categories.forEach(subcategory => {
+  subcategories.forEach(subcategory => {
     const option = document.createElement("option");
     option.value = subcategory;
     option.textContent = subcategory;
