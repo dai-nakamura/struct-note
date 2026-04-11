@@ -240,6 +240,17 @@ function updateMaterialSelect() {
 
   updateCategoryFilter();
 }
+function toggleMaster() {
+  const section = document.getElementById("masterSection");
+  const button = document.getElementById("masterToggleBtn");
+
+  if (!section || !button) return;
+
+  const isHidden = section.style.display === "none";
+
+  section.style.display = isHidden ? "block" : "none";
+  button.textContent = isHidden ? "原価マスター ▲" : "原価マスター ▼";
+}
 function addIngredient() {
   const index = Number(document.getElementById("materialSelect").value);
   const amount = Number(document.getElementById("useAmount").value);
