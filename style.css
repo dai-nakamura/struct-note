@@ -156,6 +156,14 @@ button:hover {
 .card .card {
   box-shadow: none;
 }
+.mini-item {
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 10px 12px;
+  background: #fafafa;
+  display: grid;
+  gap: 8px;
+}
 
 .mini-list {
   display: grid;
