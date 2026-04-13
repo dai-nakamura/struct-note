@@ -1,86 +1,173 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <title>原価マスター</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>原価・レシピ管理</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <div class="app">
+    <header class="header">
+      <div>
+        <h1 class="title">原価・レシピ管理</h1>
+        <p class="sub">iPhoneで使いやすいように整理した原価マスター・レシピ計算アプリ</p>
+      </div>
+    </header>
 
-<h1>原価マスター</h1>
+    <main class="layout">
+      <section class="card">
+        <h2 class="section-title">データ取り込み</h2>
 
-<h2>CSV取り込み</h2>
+        <div class="field">
+          <label class="label">CSV貼り付け</label>
+          <textarea id="csvInput" class="textarea" placeholder="CSVをここに貼り付け"></textarea>
+        </div>
 
-<textarea id="csvInput" placeholder="CSV貼り付け"></textarea><br>
-<button onclick="importCSV()">貼り付けCSV取り込み</button>
+        <div class="button-row">
+          <button class="btn-dark" onclick="importCSV()">貼り付けCSV取り込み</button>
+        </div>
 
-<br><br>
+        <div class="field">
+          <label class="label">CSVファイル</label>
+          <input type="file" id="csvFile" accept=".csv" class="input" />
+        </div>
 
-<input type="file" id="csvFile" accept=".csv">
-<button onclick="importCSVFile()">CSVファイル取り込み</button>
+        <div class="button-row">
+          <button class="btn-light" onclick="importCSVFile()">CSVファイル取り込み</button>
+        </div>
+      </section>
 
-<hr>
+      <section class="card">
+        <h2 class="section-title">原価マスター登録</h2>
 
-<h2>登録</h2>
+        <div class="field">
+          <label class="label">材料名</label>
+          <input id="name" class="input" placeholder="例：バター" />
+        </div>
 
-<input id="name" placeholder="材料名"><br>
-<input id="subcategory" placeholder="分類"><br>
-<input id="lot" placeholder="ロット（g）"><br>
-<input id="price" placeholder="価格（円）"><br>
+        <div class="field">
+          <label class="label">小分類</label>
+          <input id="subcategory" class="input" placeholder="例：乳製品 / 粉類 / ナッツ" />
+        </div>
 
-<select id="unit">
-  <option value="g">g</option>
-  <option value="kg">kg</option>
-  <option value="個">個</option>
-</select>
+        <div class="grid-2">
+          <div class="field">
+            <label class="label">ロット</label>
+            <input id="lot" class="input" placeholder="例：450" />
+          </div>
 
-<input id="gPerUnit" placeholder="1個何g（任意）"><br>
+          <div class="field">
+            <label class="label">価格（円）</label>
+            <input id="price" class="input" placeholder="例：890" />
+          </div>
+        </div>
 
-<button onclick="addManual()">追加</button>
+        <div class="grid-2">
+          <div class="field">
+            <label class="label">単位</label>
+            <select id="unit" class="select">
+              <option value="g">g</option>
+              <option value="kg">kg</option>
+              <option value="個">個</option>
+            </select>
+          </div>
 
-<hr>
+          <div class="field">
+            <label class="label">1個何g（任意）</label>
+            <input id="gPerUnit" class="input" placeholder="例：50" />
+          </div>
+        </div>
 
-<button id="masterToggleBtn" onclick="toggleMaster()">原価マスター ▼</button>
-<div id="masterSection" style="display: none;">
-  <div id="list"></div>
-</div>
+        <div class="button-row">
+          <button class="btn-dark" onclick="addManual()">追加</button>
+          <button class="btn-danger" onclick="resetData()">全削除（初期化）</button>
+        </div>
+      </section>
 
-<hr>
+      <section class="card">
+        <button id="masterToggleBtn" class="toggle-btn" onclick="toggleMaster()">原価マスター ▼</button>
 
-<h2>レシピ</h2>
+        <div id="masterSection" style="display: none;">
+          <div id="list" class="list"></div>
+        </div>
+      </section>
 
+      <section class="card">
+        <h2 class="section-title">レシピ作成</h2>
 
-<select id="filterSubCategory" onchange="updateMaterialSelect()">
-  <option value="">すべての分類</option>
-</select>
+        <div class="field">
+          <label class="label">小分類で絞り込み</label>
+          <select id="filterSubCategory" class="select" onchange="updateMaterialSelect()">
+            <option value="">すべての分類</option>
+          </select>
+        </div>
 
-<select id="materialSelect"></select>
-<input id="useAmount" placeholder="使用量（g）">
-<button onclick="addIngredient()">材料追加</button>
+        <div class="grid-2">
+          <div class="field">
+            <label class="label">材料</label>
+            <select id="materialSelect" class="select"></select>
+          </div>
 
-<h3>材料リスト</h3>
-<div id="recipeList"></div>
+          <div class="field">
+            <label class="label">使用量（g）</label>
+            <input id="useAmount" class="input" placeholder="例：100" />
+          </div>
+        </div>
 
-<input id="yield" placeholder="出来高"><br>
-<select id="yieldUnit">
-  <option value="g">g</option>
-  <option value="個">個</option>
-</select>
+        <div class="button-row">
+          <button class="btn-dark" onclick="addIngredient()">材料追加</button>
+        </div>
 
-<input id="priceSell" placeholder="売価（円）"><br>
+        <h3 class="sub-title">材料リスト</h3>
+        <div id="recipeList" class="mini-list"></div>
 
-<button onclick="calcCost()">計算</button>
+        <div class="grid-2">
+          <div class="field">
+            <label class="label">出来高</label>
+            <input id="yield" class="input" placeholder="例：12" />
+          </div>
 
-<h3 id="result"></h3>
+          <div class="field">
+            <label class="label">出来高単位</label>
+            <select id="yieldUnit" class="select">
+              <option value="g">g</option>
+              <option value="個">個</option>
+            </select>
+          </div>
+        </div>
 
-<hr>
+        <div class="field">
+          <label class="label">売価（円）</label>
+          <input id="priceSell" class="input" placeholder="例：300" />
+        </div>
 
-<h2>データ管理</h2>
+        <div class="button-row">
+          <button class="btn-dark" onclick="calcCost()">計算</button>
+        </div>
 
-<button onclick="exportData()">保存（JSON）</button>
-<input type="file" id="loadFile" accept=".json">
-<button onclick="importData()">読み込み</button>
+        <div id="result" class="result-card"></div>
+      </section>
 
-<script src="app.js"></script>
+      <section class="card">
+        <h2 class="section-title">データ管理</h2>
+
+        <div class="button-row">
+          <button class="btn-light" onclick="exportData()">保存（JSON）</button>
+        </div>
+
+        <div class="field">
+          <label class="label">JSON読み込み</label>
+          <input type="file" id="loadFile" accept=".json" class="input" />
+        </div>
+
+        <div class="button-row">
+          <button class="btn-light" onclick="importData()">読み込み</button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
 </body>
 </html>
