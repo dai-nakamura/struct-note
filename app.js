@@ -267,7 +267,6 @@ function addIngredient() {
   renderRecipe();
   document.getElementById("useAmount").value = "";
 }
-
 function renderRecipe() {
   const list = document.getElementById("recipeList");
   if (!list) return;
@@ -276,9 +275,10 @@ function renderRecipe() {
 
   recipe.forEach((r, i) => {
     const div = document.createElement("div");
+    div.className = "mini-item";
 
     div.innerHTML = `
-      ${r.name} - ${r.amount}g
+      <div><strong>${r.name}</strong> - ${r.amount}g</div>
       <button onclick="removeIngredient(${i})">削除</button>
     `;
 
