@@ -344,6 +344,6 @@ function resetData() {
 // 初期化
 // --------------------
 loadData();
-render()
+render();
   updateSubCategoryFilter();
   updateMaterialSelect(); 
