@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ぬす<!DOCTYPE html>
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
@@ -145,9 +145,16 @@
         <div class="button-row">
           <button class="btn-dark" onclick="calcCost()">計算</button>
         </div>
+        <button class="btn-light" onclick="saveProductCost()">商品原価を保存</button>
 
         <div id="result" class="result-card"></div>
       </section>
+      <hr>
+
+<button id="productToggleBtn" class="toggle-btn" onclick="toggleProducts()">商品原価一覧 ▼</button>
+<div id="productSection" style="display:none;">
+  <div id="productList" class="list"></div>
+</div>
 
       <section class="card">
         <h2 class="section-title">データ管理</h2>
