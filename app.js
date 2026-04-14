@@ -321,6 +321,24 @@ function calcCost() {
     原価率: ${rate.toFixed(1)}%
   `;
 }
+function resetData() {
+  const ok = confirm("すべてのデータを削除しますか？");
+
+  if (!ok) return;
+
+  // データ初期化
+  items = [];
+  recipe = [];
+
+  // 保存データ削除（超重要）
+  localStorage.removeItem("items");
+
+  // 画面更新
+  render();
+  renderRecipe();
+
+  alert("初期化しました");
+}
 
 // --------------------
 // 初期化
