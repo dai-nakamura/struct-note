@@ -1,11 +1,14 @@
 let items = [];
 let recipe = [];
-
+let products = JSON.parse(localStorage.getItem("products") || "[]");
 // --------------------
 // 保存・読込
 // --------------------
 function saveData() {
   localStorage.setItem("items", JSON.stringify(items));
+}
+function saveProducts() {
+  localStorage.setItem("products", JSON.stringify(products));
 }
 
 function loadData() {
@@ -297,7 +300,113 @@ function calcCost() {
   recipe.forEach(r => {
     total += r.unitPrice * r.amount;
   });
+function saveProductCost() {
+  const recipeName = document.getElementById("recipeName")?.value.trim();
+  const yieldAmount = Number(document.getElementById("yield").value);
+  const yieldUnit = document.getElementById("yieldUnit")?.value || "g";
+  const sell = Number(document.getElementById("priceSell").value);
 
+  if (!recipeName) {
+    alert("レシピ名を入力してください");
+    return;
+  }
+
+  if (!recipe.length) {
+    alert("材料を追加してください");
+    return;
+  }
+
+  let total = 0;
+  recipe.forEach(r => {
+    total += r.unitPrice * r.amount;
+  });
+
+  const perUnit = yieldAmount ? total / yieldAmount : 0;
+
+  let rate = 0;
+  if (sell && yieldAmount) {
+    if (yieldUnit === "個") {
+      const totalSales = sell * yieldAmount;
+      rate = (total / totalSales) * 100;
+    } else {
+      rate = (total / sell) * 100;
+    }
+  }
+
+  products.push({
+    name: recipeName,
+    ingredients: [...recipe],
+    totalCost: total,
+    yieldAmount,
+    yieldUnit,
+    perUnitCost: perUnit,
+    sellPrice: sell,
+    rate,
+    createdAt: Date.now()
+  });
+
+  saveProducts();
+  renderProducts();
+  alert("商品原価を保存しました");
+}
+
+function renderProducts() {
+  const list = document.getElementById("productList");
+  if (!list) return;
+
+  list.innerHTML = "";
+
+  products
+    .slice()
+    .sort((a, b) => b.createdAt - a.createdAt)
+    .forEach((product, index) => {
+      const div = document.createElement("div");
+      div.className = "card";
+
+      div.innerHTML = `
+        <div>
+          <strong>${product.name}</strong>
+          <button onclick="toggleProductDetail(${index})">詳細</button>
+          <button onclick="removeProduct(${index})">削除</button>
+        </div>
+        <div id="product-detail-${index}" style="display:none; margin-top:8px;">
+          <div>合計原価: ${product.totalCost.toFixed(2)}円</div>
+          <div>出来高: ${product.yieldAmount}${product.yieldUnit}</div>
+          <div>単価: ${product.perUnitCost.toFixed(2)}円/${product.yieldUnit}</div>
+          <div>売価: ${product.sellPrice || 0}円</div>
+          <div>原価率: ${product.rate.toFixed(1)}%</div>
+        </div>
+      `;
+
+      list.appendChild(div);
+    });
+}
+
+function toggleProducts() {
+  const section = document.getElementById("productSection");
+  const button = document.getElementById("productToggleBtn");
+
+  if (!section || !button) return;
+
+  const isHidden =
+    section.style.display === "none" || section.style.display === "";
+
+  section.style.display = isHidden ? "block" : "none";
+  button.textContent = isHidden ? "商品原価一覧 ▲" : "商品原価一覧 ▼";
+}
+
+function toggleProductDetail(index) {
+  const detail = document.getElementById(`product-detail-${index}`);
+  if (!detail) return;
+
+  detail.style.display = detail.style.display === "none" ? "block" : "none";
+}
+
+function removeProduct(index) {
+  products.splice(index, 1);
+  saveProducts();
+  renderProducts();
+}
   const yieldAmount = Number(document.getElementById("yield").value);
   const yieldUnit = document.getElementById("yieldUnit")?.value || "g";
   const sell = Number(document.getElementById("priceSell").value);
@@ -345,5 +454,4 @@ function resetData() {
 // --------------------
 loadData();
 render();
-  updateSubCategoryFilter();
-  updateMaterialSelect(); 
+renderProducts();
