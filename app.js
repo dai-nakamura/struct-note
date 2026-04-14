@@ -300,6 +300,31 @@ function calcCost() {
   recipe.forEach(r => {
     total += r.unitPrice * r.amount;
   });
+
+  const yieldAmount = Number(document.getElementById("yield").value);
+  const yieldUnit = document.getElementById("yieldUnit")?.value || "g";
+  const sell = Number(document.getElementById("priceSell").value);
+
+  const perUnit = yieldAmount ? total / yieldAmount : 0;
+
+  let rate = 0;
+
+  if (sell && yieldAmount) {
+    if (yieldUnit === "個") {
+      const totalSales = sell * yieldAmount;
+      rate = (total / totalSales) * 100;
+    } else {
+      rate = (total / sell) * 100;
+    }
+  }
+
+  document.getElementById("result").innerHTML = `
+    合計原価: ${total.toFixed(2)}円<br>
+    ${yieldUnit}単価: ${perUnit.toFixed(2)}円/${yieldUnit}<br>
+    原価率: ${rate.toFixed(1)}%
+  `;
+}
+
 function saveProductCost() {
   const recipeName = document.getElementById("recipeName")?.value.trim();
   const yieldAmount = Number(document.getElementById("yield").value);
@@ -407,44 +432,21 @@ function removeProduct(index) {
   saveProducts();
   renderProducts();
 }
-  const yieldAmount = Number(document.getElementById("yield").value);
-  const yieldUnit = document.getElementById("yieldUnit")?.value || "g";
-  const sell = Number(document.getElementById("priceSell").value);
 
-  const perUnit = yieldAmount ? total / yieldAmount : 0;
-
-  let rate = 0;
-
-  if (sell && yieldAmount) {
-    if (yieldUnit === "個") {
-      const totalSales = sell * yieldAmount;   // 1個300円 × 12個
-      rate = (total / totalSales) * 100;
-    } else {
-      rate = (total / sell) * 100;
-    }
-  }
-
-  document.getElementById("result").innerHTML = `
-    合計原価: ${total.toFixed(2)}円<br>
-    ${yieldUnit}単価: ${perUnit.toFixed(2)}円/${yieldUnit}<br>
-    原価率: ${rate.toFixed(1)}%
-  `;
-}
 function resetData() {
   const ok = confirm("すべてのデータを削除しますか？");
-
   if (!ok) return;
 
-  // データ初期化
   items = [];
   recipe = [];
+  products = [];
 
-  // 保存データ削除（超重要）
   localStorage.removeItem("items");
+  localStorage.removeItem("products");
 
-  // 画面更新
   render();
   renderRecipe();
+  renderProducts();
 
   alert("初期化しました");
 }
